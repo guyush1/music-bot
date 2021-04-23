@@ -1,37 +1,63 @@
+import logging
+
 from telegram.ext import *
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 
-from API_KEY import API_KEY
-import Commands.add_song_command as song_command 
-import Commands.add_album_command as album_command
-import Commands.basic_commands as basic_commands
+import db.db_handler as db_handler
 
-print("Bot initializing")
+from telegram_bot.API_KEY import API_KEY
+import telegram_bot.Commands.add_song_commands as song_command
+import telegram_bot.Commands.add_album_commands as album_command
+import telegram_bot.Commands.basic_commands as basic_commands
 
-def main():
-    updater = Updater(API_KEY, use_context=True)
-    dp = updater.dispatcher
+
+def init_bot(updater: Updater):
+    bot_dispatcher = updater.dispatcher
 
     # Add the basic commands
-    dp.add_handler(CommandHandler("start", basic_commands.start_command))
-    dp.add_handler(CommandHandler("help", basic_commands.help_command))
+    bot_dispatcher.add_handler(CommandHandler("start", basic_commands.start_command))
+    bot_dispatcher.add_handler(CommandHandler("help", basic_commands.help_command))
 
     # Add error handling
-    dp.add_error_handler(basic_commands.error)
-
+    bot_dispatcher.add_error_handler(basic_commands.error)
+    
     # Add the conversation commands (addsong and addalbum)
-    dp.add_handler(ConversationHandler(
+    bot_dispatcher.add_handler(ConversationHandler(
         entry_points=[CommandHandler("addsong", song_command.add_song_command)],
-        states={song_command.ADD_SONG: [MessageHandler((Filters.text &  ~ Filters.command), song_command.add_song)]},
+        states={
+                song_command.IS_ALBUM:                  [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_is_album)],
+                song_command.IS_ALBUM_QUERY:            [CallbackQueryHandler(song_command.get_is_album_query)],
+                song_command.ALBUM_NAME:                [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_album_name)],
+                song_command.SONG_NAME:                 [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_song_name)],
+                song_command.IS_PRIVATE_QUERY:          [CallbackQueryHandler(song_command.get_is_private_query)],
+            },
         fallbacks=[CommandHandler("cancel", basic_commands.cancel_command)]))
     
-    dp.add_handler(ConversationHandler(
+    bot_dispatcher.add_handler(ConversationHandler(
         entry_points=[CommandHandler("addalbum", album_command.add_album_command)],
-        states={album_command.ADD_ALBUM: [MessageHandler((Filters.text &  ~ Filters.command), album_command.add_album)]},
+        states={
+                album_command.ALBUM_NAME:                       [MessageHandler((Filters.text &  ~ Filters.command), album_command.get_album_name)],
+                album_command.IS_PRIVATE:                       [MessageHandler((Filters.text &  ~ Filters.command), album_command.is_private)],
+                album_command.IS_PRIVATE_QUERY:                 [CallbackQueryHandler(album_command.get_is_private_query)],
+            },
         fallbacks=[CommandHandler("cancel", basic_commands.cancel_command)]))
 
     # Poll and block
     updater.start_polling(0.5)
     updater.idle()
+
+
+def main():
+    logging.getLogger().setLevel(logging.DEBUG)
+    # logging.debug("-------------------------------------------------")
+    print("Bot initializing!\n")
+
+    # Initalize the db
+    db_handler.initialize_db()
+
+    updater = Updater(API_KEY, use_context=True)
+    init_bot(updater)
+
 
 if __name__ == "__main__":
     main()
