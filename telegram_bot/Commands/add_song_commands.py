@@ -1,6 +1,8 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ConversationHandler, CallbackContext
 
+import db.db_handler as db_handler
+
 IS_ALBUM, IS_ALBUM_QUERY, ALBUM_NAME, SONG_NAME, IS_PRIVATE_QUERY = range(5)
 
 
@@ -27,11 +29,11 @@ def get_is_album_query(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
 
-    context.user_data["is_album"] = query.data
     if (query.data == "yes"):
         query.message.reply_text("What is the name of the album?")
         return ALBUM_NAME
     else:
+        context.user_data["album_name"] = ""
         query.message.reply_text("What is the song's name?")
         return SONG_NAME
 
@@ -46,8 +48,8 @@ def get_song_name(update: Update, context: CallbackContext):
     context.user_data["song_name"] = update.message.text
     keyboard = [
                     [
-                        InlineKeyboardButton("yes", callback_data="yes"),
-                        InlineKeyboardButton("no", callback_data="no")
+                        InlineKeyboardButton("yes", callback_data=int(True)),
+                        InlineKeyboardButton("no", callback_data=int(False))
                     ],
                 ]
     is_private_question = InlineKeyboardMarkup(keyboard)
@@ -61,5 +63,10 @@ def get_is_private_query(update: Update, context: CallbackContext):
 
     context.user_data["is_private"] = query.data
 
-    # TODO: Add the context.user_data to the db
+    # Add the song to the song db
+    db_handler.DBHandler().add_song(context.user_data["song_name"],
+                                    context.user_data["artist_name"],
+                                    context.user_data["album_name"],
+                                    context.user_data["is_private"])
+
     return ConversationHandler.END

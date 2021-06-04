@@ -350,3 +350,6 @@ MigrationBackup/
 .ionide/
 
 .vscode/
+
+telegram_bot/API_KEY.py
+db/musicDB.db

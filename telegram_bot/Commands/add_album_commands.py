@@ -1,6 +1,8 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ConversationHandler, CallbackContext
 
+import db.db_handler as db_handler
+
 ALBUM_NAME, IS_PRIVATE, IS_PRIVATE_QUERY = range(3)
 
 
@@ -19,8 +21,8 @@ def is_private(update: Update, context: CallbackContext):
     context.user_data["album_name"] = update.message.text
     keyboard = [
                     [
-                        InlineKeyboardButton("yes", callback_data="yes"),
-                        InlineKeyboardButton("no", callback_data="no")
+                        InlineKeyboardButton("yes", callback_data=int(True)),
+                        InlineKeyboardButton("no", callback_data=int(False))
                     ],
                 ]
     is_private_question = InlineKeyboardMarkup(keyboard)
@@ -33,6 +35,10 @@ def get_is_private_query(update: Update, context: CallbackContext):
     query.answer()
 
     context.user_data["is_private"] = query.data
-    print(context.user_data)
-    # TODO: Add the context.user_data to the db
+
+    # Add the album to the album db
+    db_handler.DBHandler().add_album(context.user_data["album_name"],
+                                     context.user_data["artist_name"],
+                                     context.user_data["is_private"])
+
     return ConversationHandler.END

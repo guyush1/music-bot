@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import logging
 
 from telegram.ext import *
@@ -48,12 +50,11 @@ def init_bot(updater: Updater):
 
 
 def main():
-    logging.getLogger().setLevel(logging.DEBUG)
-    # logging.debug("-------------------------------------------------")
+    logging.getLogger().setLevel(logging.ERROR)
     print("Bot initializing!\n")
 
-    # Initalize the db
-    db_handler.initialize_db()
+    # Initalize the db using the one time used "init"
+    db_handler.DBHandler()
 
     updater = Updater(API_KEY, use_context=True)
     init_bot(updater)
