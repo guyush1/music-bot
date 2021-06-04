@@ -1,6 +1,5 @@
 import db.db_queries as db_queries
 import sqlite3
-from typing import Union
 
 class DBSingleton(type):
     def __init__(self, name, bases, dic):
@@ -48,7 +47,7 @@ class DBHandler(metaclass=DBSingleton):
         except sqlite3.Error as err:
             print(err)
 
-    def add_song(self, song_name: str, artist_name: str, song_album_name: Union[str, None], is_private: bool):
+    def add_song(self, song_name: str, artist_name: str, song_album_name: str, is_private: bool):
         """
         Adds a song to the db.
 
@@ -61,7 +60,7 @@ class DBHandler(metaclass=DBSingleton):
             c = self.db_con.cursor()
             c.execute(db_queries.SQL_ADD_SONG,
                     # Parameters as a tuple
-                    (song_name, artist_name, "" if not song_album_name else song_album_name, int(is_private), int(False)))
+                    (song_name, artist_name, song_album_name, int(is_private), int(False)))
             self.db_con.commit()
         except sqlite3.Error as err:
             print(err)

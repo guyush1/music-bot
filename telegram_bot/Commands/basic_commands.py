@@ -1,6 +1,8 @@
 from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler
 
+import logging
+
 
 def start_command(update: Update, context: CallbackContext):
     update.message.reply_text("Welcome to my music bot, use the help command for more info :)")
@@ -16,4 +18,4 @@ def cancel_command(update: Update, context: CallbackContext):
 
 
 def error(update: Update, context: CallbackContext):
-    print("error is : ", context.error)
+    logging.error("error is : {}".format(context.error))
