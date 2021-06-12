@@ -37,8 +37,12 @@ def get_is_private_query(update: Update, context: CallbackContext):
     context.user_data["is_private"] = query.data
 
     # Add the album to the album db
-    db_handler.DBHandler.add_album(context.user_data["album_name"],
-                                   context.user_data["artist_name"],
-                                   context.user_data["is_private"])
+    success = db_handler.DBHandler.add_album(context.user_data["album_name"],
+                                             context.user_data["artist_name"],
+                                             context.user_data["is_private"])
+    if success:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="האלבום הוכנס בהצלחה!")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="הפעולה לא הצליחה :(")
 
     return ConversationHandler.END

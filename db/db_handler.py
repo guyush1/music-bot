@@ -52,9 +52,8 @@ class DBHandler():
                         (song_name, artist_name, song_album_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
-            return False, err
-
-        return True, None
+            return False
+        return True
 
     @staticmethod
     def add_album(album_name: str, artist_name: str, is_private: bool):
@@ -73,6 +72,5 @@ class DBHandler():
                         (album_name, artist_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
-            return False, err
-
-        return True, None
+            return False
+        return True
