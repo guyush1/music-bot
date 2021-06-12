@@ -35,7 +35,7 @@ class DBHandler():
             exit(1)
 
     @staticmethod
-    def add_song(song_name: str, artist_name: str, song_album_name: str, is_private: bool):
+    def add_song(song_name: str, artist_name: str, is_private: bool):
         """
         Adds a song to the db.
 
@@ -48,8 +48,8 @@ class DBHandler():
             with sqlite3.connect(db_queries.DB_NAME) as db_con:
                 c = db_con.cursor()
                 c.execute(db_queries.SQL_ADD_SONG,
-                        # Parameters as a tuple
-                        (song_name, artist_name, song_album_name, int(is_private), int(False)))
+                          # Parameters as a tuple
+                          (song_name, artist_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
             return False
@@ -68,8 +68,8 @@ class DBHandler():
             with sqlite3.connect(db_queries.DB_NAME) as db_con:
                 c = db_con.cursor()
                 c.execute(db_queries.SQL_ADD_ALBUM,
-                        # Parameters as a tuple
-                        (album_name, artist_name, int(is_private), int(False)))
+                          # Parameters as a tuple
+                          (album_name, artist_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
             return False

@@ -27,10 +27,8 @@ def init_bot(updater: Updater):
     bot_dispatcher.add_handler(ConversationHandler(
         entry_points=[CommandHandler("addsong", song_command.add_song_command)],
         states={
-                song_command.IS_ALBUM:                  [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_is_album)],
-                song_command.IS_ALBUM_QUERY:            [CallbackQueryHandler(song_command.get_is_album_query)],
-                song_command.ALBUM_NAME:                [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_album_name)],
                 song_command.SONG_NAME:                 [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_song_name)],
+                song_command.IS_PRIVATE:                [MessageHandler((Filters.text &  ~ Filters.command), song_command.get_is_private)],
                 song_command.IS_PRIVATE_QUERY:          [CallbackQueryHandler(song_command.get_is_private_query)],
             },
         fallbacks=[CommandHandler("cancel", basic_commands.cancel_command)]))
@@ -39,7 +37,7 @@ def init_bot(updater: Updater):
         entry_points=[CommandHandler("addalbum", album_command.add_album_command)],
         states={
                 album_command.ALBUM_NAME:                       [MessageHandler((Filters.text &  ~ Filters.command), album_command.get_album_name)],
-                album_command.IS_PRIVATE:                       [MessageHandler((Filters.text &  ~ Filters.command), album_command.is_private)],
+                album_command.IS_PRIVATE:                       [MessageHandler((Filters.text &  ~ Filters.command), album_command.get_is_private)],
                 album_command.IS_PRIVATE_QUERY:                 [CallbackQueryHandler(album_command.get_is_private_query)],
             },
         fallbacks=[CommandHandler("cancel", basic_commands.cancel_command)]))

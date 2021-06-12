@@ -17,7 +17,7 @@ def get_album_name(update: Update, context: CallbackContext):
     return IS_PRIVATE
 
 
-def is_private(update: Update, context: CallbackContext):
+def get_is_private(update: Update, context: CallbackContext):
     context.user_data["album_name"] = update.message.text
     keyboard = [
                     [
