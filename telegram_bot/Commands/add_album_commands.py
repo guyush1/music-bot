@@ -7,13 +7,13 @@ ALBUM_NAME, IS_PRIVATE, IS_PRIVATE_QUERY = range(3)
 
 
 def add_album_command(update: Update, context: CallbackContext):
-    update.message.reply_text("What is the name of the artist?")
+    update.message.reply_text("מהו השם של האומן?")
     return ALBUM_NAME
 
 
 def get_album_name(update: Update, context: CallbackContext):
     context.user_data["artist_name"] = update.message.text
-    update.message.reply_text("What is the album's name?")
+    update.message.reply_text("מהו השם של האלבום?")
     return IS_PRIVATE
 
 
@@ -21,12 +21,12 @@ def is_private(update: Update, context: CallbackContext):
     context.user_data["album_name"] = update.message.text
     keyboard = [
                     [
-                        InlineKeyboardButton("yes", callback_data=int(True)),
-                        InlineKeyboardButton("no", callback_data=int(False))
+                        InlineKeyboardButton("כן", callback_data=int(True)),
+                        InlineKeyboardButton("לא", callback_data=int(False))
                     ],
                 ]
     is_private_question = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text("Do you want the album to be private? (will be placed in the private folder)", reply_markup=is_private_question)
+    update.message.reply_text("האם אתה רוצה שהאלבום יהיה פרטי (ימוקם בתקייה נפרדת)", reply_markup=is_private_question)
     return IS_PRIVATE_QUERY
 
 
