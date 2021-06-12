@@ -7,6 +7,7 @@ ALBUM_NAME, IS_PRIVATE, IS_PRIVATE_QUERY = range(3)
 
 
 def add_album_command(update: Update, context: CallbackContext):
+    update.message.reply_text("תמיד אפשר לבטל את התהליך עם הפקודה /cancel")
     update.message.reply_text("מהו השם של האומן?")
     return ALBUM_NAME
 

@@ -3,19 +3,15 @@ from telegram.ext import CallbackContext, ConversationHandler
 
 import logging
 
-
 def start_command(update: Update, context: CallbackContext):
-    update.message.reply_text("Welcome to my music bot, use the help command for more info :)")
-
+    update.message.reply_text("ברוכים הבאים לבוט המוזיקה, השתמשו בפקודה /help למידע נוסף")
 
 def help_command(update: Update, context: CallbackContext):
-    update.message.reply_text("Add a song/album using the /addsong or /addalbum command")
-
+    update.message.reply_text("הוסף שיר/אלבום בעזרת הפקודות /addsong או /addalbum")
 
 def cancel_command(update: Update, context: CallbackContext):
-    update.message.reply_text("Command canceled")
+    update.message.reply_text("הפקודה בוטלה")
     return ConversationHandler.END
-
 
 def error(update: Update, context: CallbackContext):
     logging.error("error is : {}".format(context.error))
