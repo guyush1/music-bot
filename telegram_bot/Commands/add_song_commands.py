@@ -64,9 +64,9 @@ def get_is_private_query(update: Update, context: CallbackContext):
     context.user_data["is_private"] = query.data
 
     # Add the song to the song db
-    db_handler.DBHandler().add_song(context.user_data["song_name"],
-                                    context.user_data["artist_name"],
-                                    context.user_data["album_name"],
-                                    context.user_data["is_private"])
+    db_handler.DBHandler.add_song(context.user_data["song_name"],
+                                  context.user_data["artist_name"],
+                                  context.user_data["album_name"],
+                                  context.user_data["is_private"])
 
     return ConversationHandler.END

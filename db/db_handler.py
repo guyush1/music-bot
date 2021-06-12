@@ -1,21 +1,8 @@
+from os import stat
 import db.db_queries as db_queries
 import sqlite3
 
-class DBSingleton(type):
-    def __init__(self, name, bases, dic):
-        self.__single_instance = None
-        super().__init__(name, bases, dic)
- 
-    def __call__(cls, *args, **kwargs):
-        if cls.__single_instance:
-            return cls.__single_instance
-
-        single_obj = cls.__new__(cls)
-        single_obj.__init__(*args, **kwargs)
-        cls.__single_instance = single_obj
-        return single_obj
-
-class DBHandler(metaclass=DBSingleton):
+class DBHandler():
     """
     Class responsible handling database related operations.
     This class is defined as a singleton to maintain one instance of db handling.
@@ -26,9 +13,6 @@ class DBHandler(metaclass=DBSingleton):
         function creates the required db file and tables if needed.
         """
         print("DB initializing\n")
-
-        # Create the db file
-        self.db_con = sqlite3.connect(db_queries.DB_NAME)
 
         # Create the tables if they don't exist
         self.create_table_if_needed()
@@ -41,13 +25,17 @@ class DBHandler(metaclass=DBSingleton):
         :param sql_query: the query to creating the sqlLite table
         """
         try:
-            c = self.db_con.cursor()
-            c.execute(db_queries.SQL_CREATE_SONGS_TABLE)
-            c.execute(db_queries.SQL_CREATE_ALBUMS_TABLE)
+            with sqlite3.connect(db_queries.DB_NAME) as db_con:
+                c = db_con.cursor()
+                c.execute(db_queries.SQL_CREATE_SONGS_TABLE)
+                c.execute(db_queries.SQL_CREATE_ALBUMS_TABLE)
         except sqlite3.Error as err:
             print(err)
+            # Exit, the bot can't start.
+            exit(1)
 
-    def add_song(self, song_name: str, artist_name: str, song_album_name: str, is_private: bool):
+    @staticmethod
+    def add_song(song_name: str, artist_name: str, song_album_name: str, is_private: bool):
         """
         Adds a song to the db.
 
@@ -57,15 +45,19 @@ class DBHandler(metaclass=DBSingleton):
         :param is_private: indicated whether the song is public or private
         """
         try:
-            c = self.db_con.cursor()
-            c.execute(db_queries.SQL_ADD_SONG,
-                    # Parameters as a tuple
-                    (song_name, artist_name, song_album_name, int(is_private), int(False)))
-            self.db_con.commit()
+            with sqlite3.connect(db_queries.DB_NAME) as db_con:
+                c = db_con.cursor()
+                c.execute(db_queries.SQL_ADD_SONG,
+                        # Parameters as a tuple
+                        (song_name, artist_name, song_album_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
+            return False, err
 
-    def add_album(self, album_name: str, artist_name: str, is_private: bool):
+        return True, None
+
+    @staticmethod
+    def add_album(album_name: str, artist_name: str, is_private: bool):
         """
         Adds an album to the db.
 
@@ -74,10 +66,13 @@ class DBHandler(metaclass=DBSingleton):
         :param is_private:  indicated whether the song is public or private
         """
         try:
-            c = self.db_con.cursor()
-            c.execute(db_queries.SQL_ADD_ALBUM,
-                    # Parameters as a tuple
-                    (album_name, artist_name, int(is_private), int(False)))
-            self.db_con.commit()
+            with sqlite3.connect(db_queries.DB_NAME) as db_con:
+                c = db_con.cursor()
+                c.execute(db_queries.SQL_ADD_ALBUM,
+                        # Parameters as a tuple
+                        (album_name, artist_name, int(is_private), int(False)))
         except sqlite3.Error as err:
             print(err)
+            return False, err
+
+        return True, None

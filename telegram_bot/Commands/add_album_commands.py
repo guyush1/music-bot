@@ -37,8 +37,8 @@ def get_is_private_query(update: Update, context: CallbackContext):
     context.user_data["is_private"] = query.data
 
     # Add the album to the album db
-    db_handler.DBHandler().add_album(context.user_data["album_name"],
-                                     context.user_data["artist_name"],
-                                     context.user_data["is_private"])
+    db_handler.DBHandler.add_album(context.user_data["album_name"],
+                                   context.user_data["artist_name"],
+                                   context.user_data["is_private"])
 
     return ConversationHandler.END
